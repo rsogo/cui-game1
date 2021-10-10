@@ -1,4 +1,9 @@
 import readline from 'readline';
+import { Inventory } from './Inventory';
+import { GameObject } from './GameObject';
+import { Item } from './Item';
+import { User } from './User';
+import { Enemy } from './Enemy';
 
 const GREEN = '\u001b[32m';
 const RESET = '\u001b[0m';
@@ -18,81 +23,11 @@ const question = (question: string) => {
     });
 
     return new Promise((resolve) => {
-        readLineInterface.question(GREEN + question, (anser) => {
-            resolve(anser);
+        readLineInterface.question(GREEN + question, (answer) => {
+            resolve(answer);
             readLineInterface.close();
         })
     })
-}
-
-class Inventory {
-    items: Item[];
-    constructor() {
-        this.items = new Array();
-    }
-
-    list(): Item[] {
-        return this.items;
-    }
-
-    add(value: Item): Item[] {
-        this.items.push(value);
-        return this.items;
-    }
-}
-
-class GameObject {
-    id: string;
-    name: string;
-
-    constructor(id: string, name: string) {
-        this.id = id;
-        this.name = name;
-    }
-}
-
-class User extends GameObject {
-
-    hp: number;
-    constructor(name: string) {
-        super("USER", name);
-        this.hp = 10;
-    }
-}
-
-class Item extends GameObject {
-    static ITEM_KIND = [
-        new Item('PICKEL', 'ツルハシ'),
-        new Item('AXE', 'オノ'),
-        new Item('DIAMOND', 'ダイアモンド')
-    ]
-}
-
-class Enemy extends GameObject {
-
-    hp: number;
-
-    static ENEMY_KIND: Enemy[] = [
-        new Enemy('ZOMBE','ゾンビ', 10),
-        new Enemy('SKELETON', 'スケルトン', 20)
-    ]
-
-    constructor(id: string, name: string, hp: number) {
-        super(id, name);
-        this.hp = hp;
-    }
-
-    getDamage(value: number): number {
-        this.hp = this.hp - value;
-        if (this.hp < 0) {
-            this.hp = 0;
-        }
-        return this.hp;
-    }
-
-    attack(): number {
-        return 5;
-    }
 }
 
 class SearchEvent {
@@ -117,9 +52,59 @@ class SearchEvent {
     }
 }
 
+class Battle {
+    user: User;
+    enemy: Enemy;
+
+    constructor(user: User, enemy: Enemy) {
+        this.user = user;
+        this.enemy = enemy;
+    }
+
+    static DOING = 0;
+    static WIN = 1;
+    static LOSE = 2;
+    static RUN_AWAY = 3;
+
+    async buttle(): Promise<number> {
+
+        let result: number = Battle.DOING;
+
+        for(;;) {
+            const answer = await question(`何をしますか？(1:戦う 2:持ち物を見る 3:逃げる)`);
+            if (answer == "1") {
+
+                console.log(`${this.user.name}の攻撃。${this.user.attack()}のダメージを与えた！`);
+                this.enemy.getDamage(this.user.attack());
+                if (this.enemy.hp == 0) {
+                    console.log(`${this.enemy.name}を倒した！`);
+                    return Battle.WIN;
+                }
+            }
+            if (answer == "2") {
+                const items = this.user.inventory.list();
+                items.forEach(item => console.log(item.name));
+            }
+
+            if (answer == "3") {
+                console.log(`${this.user.name}は逃げた`);
+                return Battle.RUN_AWAY;
+            }
+                
+            console.log(`${this.enemy.name}の攻撃。${this.enemy.attack()}のダメージ！`);
+            this.user.hp -= this.enemy.attack();
+            if (this.user.hp <= 0) {
+                console.log(`${this.user.name}は死んでしまった。`);
+                return Battle.LOSE;
+            }
+            console.log(`${this.user.name}の残りの体力は${this.user.hp}。`);
+        }
+    }
+
+}
+
 const main = async() => {
 
-    const inventory = new Inventory();
     console.log("start.");
     console.log(gameStart());
     const name: string = <string> await question(`あなたの名前は何ですか？`);
@@ -135,16 +120,21 @@ const main = async() => {
 
             if (gameObject instanceof Enemy) {
                 console.log(`${gameObject.name}に会ってしまった！`);
-                console.log(`${user.name}は逃げた`);
+                const battle = new Battle(user, gameObject);
+                const result = await battle.buttle();
+
+                if (result == Battle.LOSE) {
+                    break;
+                }
             }
 
             if (gameObject instanceof Item) {
                 console.log(`${gameObject.name}を拾った`);
-                inventory.add(gameObject);
+                user.inventory.add(gameObject);
             }
         }
         if (answer == "2") {
-            const items = inventory.list();
+            const items = user.inventory.list();
             items.forEach(item => console.log(item.name));
         }
         if (answer == "3") {
