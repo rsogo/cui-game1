@@ -1,6 +1,7 @@
 export class GameObject {
     id: string;
     name: string;
+    
 
     constructor(id: string, name: string) {
         this.id = id;

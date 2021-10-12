@@ -1,12 +1,14 @@
 import { GameObject } from "./GameObject";
 
-export class Enemy extends GameObject {
+export class Village extends GameObject {
 
     hp: number;
 
-    static ENEMY_KIND: Enemy[] = [
-        new Enemy('ZOMBIE','ゾンビ', 10),
-        new Enemy('SKELETON', 'スケルトン', 20)
+    static VILLAGE_KIND: Village[] = [
+        new Village('SEASIDE','海辺のむら', 1),
+        new Village('MOUNTAIN', '山のむら', 2),
+        new Village('TAIGA', '氷のむら', 3),
+        new Village('DUNE', '砂漠のむら', 4)
     ]
 
     constructor(id: string, name: string, hp: number) {
