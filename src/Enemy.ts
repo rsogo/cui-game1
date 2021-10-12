@@ -6,7 +6,8 @@ export class Enemy extends GameObject {
 
     static ENEMY_KIND: Enemy[] = [
         new Enemy('ZOMBIE','ゾンビ', 10),
-        new Enemy('SKELETON', 'スケルトン', 20)
+        new Enemy('SKELETON', 'スケルトン', 20),
+        new Enemy('CREEPER', 'くりいぱあー', 100)
     ]
 
     constructor(id: string, name: string, hp: number) {

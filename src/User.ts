@@ -5,7 +5,6 @@ export class User extends GameObject {
     power: number;
     hp: number;
     inventory: Inventory;
-    
 
     constructor(name: string) {
         super("USER", name);
