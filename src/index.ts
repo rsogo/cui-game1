@@ -36,11 +36,6 @@ class SearchEvent {
         return Math.floor(Math.random() * max);
     }
 
-    // isItem(): boolean {
-    //     const i = this.getRandomInt(2);
-    //     return i == 1;
-    // }
-
     getEventID(): number {
         const i = this.getRandomInt(4);
         return i;
@@ -96,10 +91,7 @@ class Battle {
             }
             if (answer == "2") {
                 const items = this.user.inventory.list();
-                let usableItems = new Array();
-
-                
-                usableItems = items.slice(0).filter(items=>items.usableInBattle == 1);
+                let usableItems = items.slice(0).filter(items=>items.usableInBattle == 1);
 
                 if(usableItems.length==0){
                     console.log(`${this.user.name}は何も使えない！`);
@@ -109,12 +101,11 @@ class Battle {
 
                     const useitem = await question(`どのアイテムを使いますか？`);
                     if (Number(useitem) <= Number(usableItems.length)) {
-                        this.user.hp = this.user.hp + usableItems[Number(useitem)-1].hp;
-                        console.log(`${this.user.name}は${usableItems[Number(useitem)-1].name}を使った！HPが ${usableItems[Number(useitem)-1].hp} 回復した！`);
+                        this.user.hp = this.user.hp + usableItems[Number(useitem)-1].hpRecoverValue;
+                        console.log(`${this.user.name}は${usableItems[Number(useitem)-1].name}を使った！HPが ${usableItems[Number(useitem)-1].hpRecoverValue} 回復した！`);
                         //console.log(`${this.user.name}は${usableItems[1].name}を使った！${this.user.attack()}のダメージを与えた！`);
 
-                    }
-                    else{
+                    } else{
                         console.log(`${this.user.name}は何も使えない！`);
 
                     }
@@ -132,6 +123,7 @@ class Battle {
                 //console.log(`${this.user.name}は死んでしまった。`);
 //                console.log(`${this.user.name}は死んでしまった。\n________________\n|      ＋      |\n|      |       |\n|      お      |\n|      こ      |\n|      ぶ      |`);
                 console.log(`${this.user.name}は死んでしまった。\n_______________\n|      †      |\n|             |\n|    R.I.P.   |\n|    おこぶ   |\n`);
+                console.log(`${this.user.name}は死んでしまった。\n_______________\n|      †      |\n|             |\n|    R.I.P.   |\n|    ${this.user.name}   |\n`);
                 return Battle.LOSE;
             }
             console.log(`${this.user.name}の残りの体力は${this.user.hp}。`);
@@ -146,14 +138,16 @@ const main = async() => {
     console.log(gameStart());
     const name: string = <string> await question(`あなたの名前は何ですか？`);
     const user = new User(name);
-    //let destination = new Array();
+    let now = 0;
 
     console.log(`${name}は異世界に転生してしまったようだ・・・`);
+    //user.destinations(0).id=${user.name}+'のおうち';
 
     for(;;) {
 //        const answer = await question(`何をしますか？(1:周りを探す 2:持ち物を見る 3:終わる)`);
-        let destination = new Array();
+        //let destination = new Array();
         //destination.push(${GameObject.name}'のおうち','元の世界（おわる）');
+        console.log(`今、${user.name}は${user.currentPlace.name}にいます。`);
         const answer = await question(`何をしますか？(1:周りを探す 2:持ち物を見る 3:移動する)`);
         if (answer == "1") {
             const searchEvent = new SearchEvent();
@@ -184,7 +178,7 @@ const main = async() => {
                 // }
                 // else{
                     console.log(`${gameObject.name}を見つけた！`);
-                    // user.inventory.add(gameObject);
+                    user.destinations.push(gameObject);
 //                }
             }
         }
@@ -193,21 +187,28 @@ const main = async() => {
             items.forEach(item => console.log(item.name));
         }
         if (answer == "3") {
-            const dest_answer = await question(`どこへ行きますか？(1:${destination} 2:持ち物を見る 3:移動する)`);
+            let destinationsString = "";
+            user.destinations.forEach((destination: Village, i) => {
+                destinationsString = destinationsString + (i + 1) + ":" + destination.name + " ";
+            });
+            
+            const dest_answer = Number(await question(`どこへ行きますか？(${destinationsString})`));
 
-//            console.log(`${user.name}は元の世界に帰った`);
-//            break;
+            if (dest_answer == NaN || dest_answer < 1 || dest_answer > user.destinations.length) {
+                console.log("そんな場所はありません");
+            } else if (dest_answer == 2) {
+                console.log(`${user.name}は元の世界に帰った`);
+                break;
+            } else {
+                console.log(`${user.name}は${user.destinations[dest_answer - 1].name}へ移動した！`);
+                user.move(user.destinations[dest_answer - 1]);
+            }
+            
         }
     }
 
     console.log(RESET);
 }
-
-//const items = Item.ITEM_KIND;
-// items.slice(1).forEach(item => {
-//     console.log(item.id+'.'+item.name)
-// });
-
 
 main();
 
