@@ -36,11 +36,6 @@ class SearchEvent {
         return Math.floor(Math.random() * max);
     }
 
-    // isItem(): boolean {
-    //     const i = this.getRandomInt(2);
-    //     return i == 1;
-    // }
-
     getEventID(): number {
         const i = this.getRandomInt(4);
         return i;
@@ -96,10 +91,7 @@ class Battle {
             }
             if (answer == "2") {
                 const items = this.user.inventory.list();
-                let usableItems = new Array();
-
-                
-                usableItems = items.slice(0).filter(items=>items.usableInBattle == 1);
+                let usableItems = items.slice(0).filter(items=>items.usableInBattle == 1);
 
                 if(usableItems.length==0){
                     console.log(`${this.user.name}は何も使えない！`);
@@ -113,8 +105,7 @@ class Battle {
                         console.log(`${this.user.name}は${usableItems[Number(useitem)-1].name}を使った！HPが ${usableItems[Number(useitem)-1].hp} 回復した！`);
                         //console.log(`${this.user.name}は${usableItems[1].name}を使った！${this.user.attack()}のダメージを与えた！`);
 
-                    }
-                    else{
+                    } else{
                         console.log(`${this.user.name}は何も使えない！`);
 
                     }

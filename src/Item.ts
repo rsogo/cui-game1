@@ -2,7 +2,7 @@ import {GameObject} from './GameObject'
 
 export class Item extends GameObject {
 
-    hp: number;
+    hpRecoverValue: number;
     kind: number;
     usableInBattle: number;
 
@@ -14,14 +14,13 @@ export class Item extends GameObject {
         new Item('GOLDENWASABI','金のわさび',0,1,0),
         new Item('ENCHANTEDGOLDENWASABI','エンチャントされた金のわさび',7,3,1),
         new Item('WASABIPORTION','わさびのポーション',3,3,1)
-    
     ]
-    constructor(id: string, name: string, hp: number, kind: number, usableInBattle: number ) {
+
+    constructor(id: string, name: string, hpRecoverValue: number, kind: number, usableInBattle: number ) {
         super(id, name);
-        this.hp = hp;
+        this.hpRecoverValue = hpRecoverValue;
         this.kind= kind;
         this.usableInBattle= usableInBattle;
-
     }
 
 }

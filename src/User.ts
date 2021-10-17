@@ -7,7 +7,6 @@ export class User extends GameObject {
     hp: number;
     inventory: Inventory;
     destinations: Village[];
-    
 
     constructor(name: string) {
         super("USER", name);
