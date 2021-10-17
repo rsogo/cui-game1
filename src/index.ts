@@ -132,6 +132,7 @@ class Battle {
                 //console.log(`${this.user.name}は死んでしまった。`);
 //                console.log(`${this.user.name}は死んでしまった。\n________________\n|      ＋      |\n|      |       |\n|      お      |\n|      こ      |\n|      ぶ      |`);
                 console.log(`${this.user.name}は死んでしまった。\n_______________\n|      †      |\n|             |\n|    R.I.P.   |\n|    おこぶ   |\n`);
+                console.log(`${this.user.name}は死んでしまった。\n_______________\n|      †      |\n|             |\n|    R.I.P.   |\n|    ${this.user.name}   |\n`);
                 return Battle.LOSE;
             }
             console.log(`${this.user.name}の残りの体力は${this.user.hp}。`);
@@ -146,13 +147,14 @@ const main = async() => {
     console.log(gameStart());
     const name: string = <string> await question(`あなたの名前は何ですか？`);
     const user = new User(name);
-    //let destination = new Array();
+    let now = 0;
 
     console.log(`${name}は異世界に転生してしまったようだ・・・`);
+    //user.destinations(0).id=${user.name}+'のおうち';
 
     for(;;) {
 //        const answer = await question(`何をしますか？(1:周りを探す 2:持ち物を見る 3:終わる)`);
-        let destination = new Array();
+        //let destination = new Array();
         //destination.push(${GameObject.name}'のおうち','元の世界（おわる）');
         const answer = await question(`何をしますか？(1:周りを探す 2:持ち物を見る 3:移動する)`);
         if (answer == "1") {
@@ -193,8 +195,16 @@ const main = async() => {
             items.forEach(item => console.log(item.name));
         }
         if (answer == "3") {
-            const dest_answer = await question(`どこへ行きますか？(1:${destination} 2:持ち物を見る 3:移動する)`);
-
+            const dest_answer = await question(`どこへ行きますか？(1:${user.name}のおうち 2:${user.destinations[1].name} )`);
+            if (dest_answer == "1") {
+                console.log(`${user.name}はおうちへ移動した！`);
+                now = 1;
+            }
+            else if (dest_answer == "2") {
+                console.log(`${user.name}は元の世界に帰った`);
+                break;
+            }
+            
 //            console.log(`${user.name}は元の世界に帰った`);
 //            break;
         }
