@@ -15,7 +15,7 @@ export class User extends GameObject {
         this.hp = 10;
         this.power = 4;
         this.inventory = new Inventory();
-        this.destinations = [new Village('HOUSE','おうち'), new Village('HOME','元の世界へもどる')];
+        this.destinations = [new Village('HOUSE','おうち', ''), new Village('HOME','元の世界へもどる', '')];
         this.currentPlace = this.destinations[0];
     }
 

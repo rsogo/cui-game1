@@ -18,7 +18,7 @@ export class Questionnaire {
         })
     }
 
-    static PRE_BORDER = "=============================================\n= ";
+    static PRE_BORDER = "=============================================\n> ";
     static POST_BORDER = "\n============================================\n";
 
     static questionWithOptions = (question: string, options: string[]) : Promise<number> => {

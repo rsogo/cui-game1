@@ -83,8 +83,8 @@ class Battle {
                 }
                 else{
                     const answer = await Questionnaire.questionWithOptions(`どのアイテムを使いますか？`, usableItems.map(item => item.name));
-                    if (answer == NaN) {
-                        console.log("そんなアイテムはありません");
+                    if (isNaN(answer)) {
+                        console.log("アイテムを使いませんでした");
                     }
                     const result = this.user.useItem(usableItems[answer]);
                     console.log(result);
@@ -111,6 +111,15 @@ class Battle {
 
 }
 
+function showUserStatus(user: User) {
+    console.log(`\n================`);
+    console.log(`│ ${user.name}`);
+    console.log(`│ 場所:${user.currentPlace.name}`);
+    console.log(`│ HP:${String(user.hp)}`);
+    console.log(`================`);
+ 
+}
+
 const main = async() => {
 
     console.log("start.");
@@ -123,10 +132,8 @@ const main = async() => {
     //user.destinations(0).id=${user.name}+'のおうち';
 
     for(;;) {
-//        const answer = await question(`何をしますか？(1:周りを探す 2:持ち物を見る 3:終わる)`);
-        //let destination = new Array();
-        //destination.push(${GameObject.name}'のおうち','元の世界（おわる）');
-        console.log(`今、${user.name}は${user.currentPlace.name}にいます。`);
+        
+        showUserStatus(user);
         const answer = await Questionnaire.question(`何をしますか？(1:周りを探す 2:持ち物を見る 3:移動する)`);
         if (answer == "1") {
             const searchEvent = new SearchEvent();
@@ -157,6 +164,7 @@ const main = async() => {
                 // }
                 // else{
                     console.log(`${gameObject.name}を見つけた！`);
+                    console.log(`${gameObject.description}`);
                     user.destinations.push(gameObject);
 //                }
             }
@@ -166,14 +174,15 @@ const main = async() => {
             let usableItems = items.slice(0).filter(items=>items.usableInBattle == 1);
 
             if(usableItems.length==0){
-                console.log(`${user.name}は何も使えない！`);
+                console.log(`${user.name}は何も持っていない！`);
             } else{
-                const answer = await Questionnaire.questionWithOptions(`どのアイテムを使いますか？`, usableItems.map(item => item.name));
-                if (answer == NaN) {
-                    console.log("そんなアイテムはありません");
+                const answer = await Questionnaire.questionWithOptions(`アイテムを使いますか？`, usableItems.map(item => item.name));
+                if (isNaN(answer)) {
+                    console.log("アイテムを使いませんでした");
+                } else {
+                    const result = user.useItem(usableItems[answer]);
+                    console.log(result);
                 }
-                const result = user.useItem(usableItems[answer]);
-                console.log(result);
             }
         }
         if (answer == "3") {
@@ -182,7 +191,7 @@ const main = async() => {
             if (dest_answer == NaN) {
                 console.log("そんな場所はありません");
             } else if (dest_answer == 1) {
-                console.log(`${user.name}は元の世界に帰った`);
+                console.log(`${user.name}は元の世界に帰った。だが、元の世界は核戦争によって滅んだままだった。${user.name}は未来を変えることはできなかったようだ・・・。\n【BAD END】`);
                 break;
             } else {
                 console.log(`${user.name}は${user.destinations[dest_answer].name}へ移動した！`);
@@ -190,6 +199,8 @@ const main = async() => {
             }
             
         }
+
+    const name: string = <string> await Questionnaire.question(`エンターキーを押して続ける`);
     }
 
     console.log(RESET);
